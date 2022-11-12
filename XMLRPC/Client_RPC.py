@@ -1,4 +1,5 @@
 import xmlrpc.client
+import time
 
 with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy:
         # prompt the user for the input
@@ -9,8 +10,16 @@ with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy:
     # Otherwise, the server will save the previous list data 
     # And call the previouus if num2 is the same as the previous
     # By the algorithm of function findPrimeUntilDesired
+    
+    # record starting time to calculate the process time
+    time_start = time.time()
+
     prime_list1 = []
 
-    print(f'outcomes : {proxy.findPrimeUntilDesired(num1, num2, prime_list1)}')
+    outcome = proxy.findPrimeUntilDesired(num1, num2, prime_list1)
 
+    print(f'outcomes : {outcome}')
+
+    process_time = time.time() - time_start
+    print(f'{process_time : .5f}')
 # python Client_RPC.py
