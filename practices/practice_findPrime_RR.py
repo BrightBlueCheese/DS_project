@@ -88,9 +88,9 @@ def findPrimeUntilDesired_SV_02(num1, num2, prime_list=list()):
 
     return prime_list
 
-print(findPrimeUntilDesired(4, 10))
-print(findPrimeUntilDesired_SV_01(4, 5))
-print(findPrimeUntilDesired_SV_02(4, 5))
+print(findPrimeUntilDesired(2, 31))
+print(findPrimeUntilDesired_SV_01(4, 16))
+print(findPrimeUntilDesired_SV_02(4, 15))
 
 # 2, 3, 5, 7, 11, 13, 17, 19
 

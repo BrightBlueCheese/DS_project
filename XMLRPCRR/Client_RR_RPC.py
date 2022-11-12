@@ -93,6 +93,31 @@ with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_02:
 #     print(f'{process_time : .5f}')
 # # python Client_RPC.py
 
+
+# # # # #
+# Challenge : This is not yet completed
+# The code will ruin when num2 becomes large
+# Ex
+# prime numbers when num1 = 2, num2 =32 -> 
+# [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127]
+# However, 
+# SV_01 -> [5, 13, 17, 29, 37, 41, 53, 61, 73, 89, 97, 101, 109, 113, 137, 149]
+# SV_02 -> [7, 11, 19, 23, 31, 43, 47, 59, 67, 71, 79, 83, 103, 107, 127]
+# Since we don't know the distribution of prime number with
+# Z_01 that 1 + 4x where x are positive Z
+# Z_02 that 3 + 4x where x are positive Z
+# Thus, somehow, we have to do some engineering
+# To check whether the SV_02 has any additional prime number which are smaller than the biggest number of SV_01
+# And vice versa
+
+# when the biggest prime number of SV_01 is smaller than the one of SV_02
+if outcome_01[-1] < outcome_02:
+
+    # Check is there any prime number in between outcome_01[-1] and outcome_02[-2]
+    # Have to make another function.. haha
+    # 
+    pass
+
 final_outcome = outcome_01 + outcome_02
 
 print(f'outcomes : {final_outcome}')
