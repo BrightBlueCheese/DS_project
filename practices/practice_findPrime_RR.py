@@ -37,7 +37,7 @@ def findPrimeUntilDesired_SV_01(num1, num2, prime_list=list()):
     # when 0 or 1, start from 2
     if num1 == 0 or num1 == 1:
         num1 = 2
-    # when even number, make it odd number
+    # when even number except 2, make it odd number
     elif num1 != 2 and num1 % 2 == 0:
         num1 += 1
     while not num2 == len(prime_list):
@@ -88,8 +88,11 @@ def findPrimeUntilDesired_SV_02(num1, num2, prime_list=list()):
 
     return prime_list
 
-print(findPrimeUntilDesired(2, 8))
-print(findPrimeUntilDesired_SV_01(2, 4))
-print(findPrimeUntilDesired_SV_02(2, 4))
+print(findPrimeUntilDesired(4, 10))
+print(findPrimeUntilDesired_SV_01(4, 5))
+print(findPrimeUntilDesired_SV_02(4, 5))
 
 # 2, 3, 5, 7, 11, 13, 17, 19
+
+# 정확히 반으로 안나눠짐..
+# Prime Number를 해당 알고리듬을 사용해여 효과적인 round robin 구현 불가..
