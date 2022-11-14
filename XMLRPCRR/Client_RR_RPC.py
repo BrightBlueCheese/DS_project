@@ -62,7 +62,7 @@ with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_01:
     # process_time = time.time() - time_start
     # print(f'{process_time : .5f}')
 # python Client_RPC.py
-
+print(f'after server01 : {time.time() - time_start}')
 with xmlrpc.client.ServerProxy("http://localhost:8002/") as proxy_02:
     
 
@@ -113,7 +113,7 @@ with xmlrpc.client.ServerProxy("http://localhost:8002/") as proxy_02:
 
 # Solution - function 'balancer'
 
-
+print(f'after server02 : {time.time() - time_start}')
 
 outcome_01_last = outcome_01[-1]
 outcome_02_last = outcome_02[-1]
@@ -140,5 +140,23 @@ if max(outcome_01 + outcome_02) > 2:
 # final outcome, only valid primes
 final_outcome = sorted(outcome_01 + outcome_02 + extra_outcome)[:num2]
 process_time = time.time() - time_start
-print(f'outcomes : {final_outcome}')
+print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')
 print(f'{process_time : .5f}')
+
+
+# single : 2 , 100,000 -> 13.12s
+# RR : 2, 10,000 -> 20.83819
+#  sigle / RR ratio  = 1 : 1.59
+
+
+# single : 2 , 200,000 -> 33.73542
+# RR : 2, 20,000 -> 49.62175
+#  sigle : RR ratio  = 1 : 1.47
+
+# single : 2 , 300,000 -> 60.45121
+# RR : 2, 30,000 ->  86.97157
+#  sigle / RR ratio  = 1 : 1.44
+
+# single : 2 , 400,000 -> 92.03900
+# RR : 2, 30,000 ->  86.97157
+#  sigle / RR ratio  = 1 : 1.44

@@ -82,5 +82,5 @@ if max(outcome_01 + outcome_02) > 2:
 # final outcome, only valid primes
 final_outcome = sorted(outcome_01 + outcome_02 + extra_outcome)[:num2]
 process_time = time.time() - time_start
-print(f'outcomes : {final_outcome}')
+print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')
 print(f'{process_time : .5f}')
