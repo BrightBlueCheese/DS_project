@@ -59,6 +59,52 @@ def findPrimeUntilDesired_SV_02(num1, num2, prime_list=list()):
 
     return prime_list
 
+# Identical to the one in the Server02 - This system has to find the prime numbers at the server side
+# The function to find any valid (hidden) prime number b/w outcome_01[-1] and outcome_02[-1]
+def balancer(outcome_01_last, outcome_02_last, extra_prime_list=list()):
+
+    indicator = 0 
+    # 1 : extra_prime_list is the complement for outcome_02
+    # 2 : extra_prime_list is the complement for outcome_01
+
+    if outcome_01_last > outcome_02_last:
+        # try to find the next prime
+        num1 = outcome_02_last + 4 
+        # to inform which condition
+        indicator = 2 # << extra_prime_list is the complement of outcome_02
+
+        while outcome_01_last > num1:
+            if isPrime(num1) and num1 == 2:
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1+1)
+
+            elif isPrime(num1):
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1)
+
+            elif not isPrime(num1):
+                num1 = findNextPrime_RR(num1)
+                
+    elif outcome_01_last < outcome_02_last:
+        # try to find the next prime
+        num1 = outcome_01_last + 4
+        # to inform which condition 
+        indicator = 1 # << extra_prime_list is the complement of outcome_01
+
+        while num1 < outcome_02_last:
+            if isPrime(num1) and num1 == 2:
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1+1)
+
+            elif isPrime(num1):
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1)
+
+            elif not isPrime(num1):
+                num1 = findNextPrime_RR(num1)
+
+    return extra_prime_list, indicator
+
 server = SimpleXMLRPCServer(("localhost", 8001))
 print("Listening on port 8001...")
 
@@ -66,6 +112,7 @@ server.register_function(isPrime, "isPrime")
 server.register_function(findNextPrime_RR, "findNextPrime_RR")
 # server.register_function(findPrimeUntilDesired_SV_01, "findPrimeUntilDesired_SV_01")
 server.register_function(findPrimeUntilDesired_SV_02, "findPrimeUntilDesired_SV_02")
+server.register_function(balancer, 'balancer')
 
 if __name__ == '__main__':
     try:

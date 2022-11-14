@@ -123,6 +123,7 @@ def balancer(outcome_01_last, outcome_02_last, extra_prime_list=list()):
 
             elif not isPrime(num1):
                 num1 = findNextPrime_RR(num1)
+
     elif outcome_01_last < outcome_02_last:
         # try to find the next prime
         num1 = outcome_01_last + 4
@@ -143,5 +144,5 @@ def balancer(outcome_01_last, outcome_02_last, extra_prime_list=list()):
 
     return extra_prime_list, indicator
 
-print(f'Hi! : {balancer(41, 71)}')
+print(f'Hi! : {balancer(97, 71)}')
 

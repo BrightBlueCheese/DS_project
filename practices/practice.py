@@ -17,3 +17,7 @@ list_02 = [2, 4, 6]
 list_03 = list_01 + list_02
 
 print(list_03)
+
+print(max(list_01 + list_02))
+
+print(sorted(list_03)[:6])

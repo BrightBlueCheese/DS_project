@@ -28,6 +28,7 @@ def spliter(num2):
 
 num2_SV_01, num2_SV_02 = spliter(num2)
 
+# have to clear the lists for every request
 prime_list_01 = []
 prime_list_02 = []
 
@@ -110,21 +111,34 @@ with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_02:
 # To check whether the SV_02 has any additional prime number which are smaller than the biggest number of SV_01
 # And vice versa
 
-# when the biggest prime number of SV_01 is smaller than the one of SV_02
-if outcome_01[-1] < outcome_02[-1]:
+# Solution - function 'balancer'
 
-    # Check is there any prime number in between outcome_01[-1] and outcome_02[-2]
-    # Have to make another function.. haha
-    # 
+
+
+outcome_01_last = outcome_01[-1]
+outcome_02_last = outcome_02[-1]
+extra_prime_list = []
+
+# if maximum prime number is greater than 2
+if max(outcome_01 + outcome_02) > 2:
+    # Call Server02
+    if outcome_01_last > outcome_02_last:
+        with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_02:
+            extra_outcome = proxy_02.balancer(outcome_01_last, outcome_02_last, extra_prime_list)[0] # we don't need the indicator actually - just to check
     
-    pass
+    elif outcome_01_last < outcome_02_last:
+        # Call Server01
+        with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy_01:
+            extra_outcome = proxy_01.balancer(outcome_01_last, outcome_02_last, extra_prime_list)[0]
 
 
 
+# print(f'extra_outcomes : {extra_outcome}')
 
-final_outcome = outcome_01 + outcome_02
 
-print(f'outcomes : {final_outcome}')
 
+# final outcome, only valid primes
+final_outcome = sorted(outcome_01 + outcome_02 + extra_outcome)[:num2]
 process_time = time.time() - time_start
+print(f'outcomes : {final_outcome}')
 print(f'{process_time : .5f}')
