@@ -1,17 +1,23 @@
 from xmlrpc.server import SimpleXMLRPCServer
-import os
 
-server = SimpleXMLRPCServer(('localhost', 3000), logRequests=True)
+def add(x, y):
+    return x + y
 
-def list_directory(dir):
-    return os.listdir(dir)
+def subtract(x, y):
+    return x - y
 
-server.register_function(list_directory)
+def multiply(x, y):
+    return x * y
 
-if __name__ == '__main__':
-    try:
-        print('Serving...')
-        server.serve_forever()
-    
-    except KeyboardInterrupt:
-        print('Exiting')
+def divide(x, y):
+    return x // y
+
+# A simple server with simple arithmetic functions
+server = SimpleXMLRPCServer(("localhost", 8100))
+print("Listening on port 8100...")
+server.register_multicall_functions()
+server.register_function(add, 'add')
+server.register_function(subtract, 'subtract')
+server.register_function(multiply, 'multiply')
+server.register_function(divide, 'divide')
+server.serve_forever()

@@ -105,13 +105,13 @@ def balancer(outcome_01_last, outcome_02_last, extra_prime_list=list()):
 
     return extra_prime_list, indicator
 
-server = SimpleXMLRPCServer(("localhost", 8002))
-print("Listening on port 8002...")
+server = SimpleXMLRPCServer(("localhost", 8012))
+print("Listening on port 8012...")
 
 server.register_function(isPrime, "isPrime")
 server.register_function(findNextPrime_RR, "findNextPrime_RR")
 # server.register_function(findPrimeUntilDesired_SV_01, "findPrimeUntilDesired_SV_01")
-server.register_function(findPrimeUntilDesired_SV_02, "findPrimeUntilDesired_SV_02")
+server.register_function(findPrimeUntilDesired_SV_02, "findPrimeUntilDesired_SV")
 server.register_function(balancer, 'balancer')
 
 if __name__ == '__main__':

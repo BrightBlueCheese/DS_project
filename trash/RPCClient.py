@@ -1,6 +1,11 @@
-from xmlrpc.client import ServerProxy
+import xmlrpc.client
 
-proxy = ServerProxy('http://localhost:3000')
+proxy = xmlrpc.client.ServerProxy("http://localhost:8100/")
+multicall = xmlrpc.client.MultiCall(proxy)
+multicall.add(7, 3)
+multicall.subtract(7, 3)
+multicall.multiply(7, 3)
+multicall.divide(7, 3)
+result = multicall()
 
-if __name__ == '__main__':
-    print(proxy.list_diectory(r'C:\Users\Las\OneDrive\Coding\Distributed_System\XMLRPC'))
+print("7+3=%d, 7-3=%d, 7*3=%d, 7//3=%d" % tuple(result))

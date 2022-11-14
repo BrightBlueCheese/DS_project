@@ -18,8 +18,9 @@ with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy:
 
     outcome = proxy.findPrimeUntilDesired(num1, num2, prime_list1)
 
-    print(f'outcomes : {outcome}')
+    
 
     process_time = time.time() - time_start
+    print(f'outcomes : {outcome}')
     print(f'{process_time : .5f}')
 # python Client_RPC.py

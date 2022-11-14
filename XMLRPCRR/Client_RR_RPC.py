@@ -32,7 +32,7 @@ num2_SV_01, num2_SV_02 = spliter(num2)
 prime_list_01 = []
 prime_list_02 = []
 
-with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy_01:
+with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_01:
     
 
     # # Have to assign empty list for every trial
@@ -63,7 +63,7 @@ with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy_01:
     # print(f'{process_time : .5f}')
 # python Client_RPC.py
 
-with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_02:
+with xmlrpc.client.ServerProxy("http://localhost:8002/") as proxy_02:
     
 
     # # Have to assign empty list for every trial
@@ -123,12 +123,12 @@ extra_prime_list = []
 if max(outcome_01 + outcome_02) > 2:
     # Call Server02
     if outcome_01_last > outcome_02_last:
-        with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_02:
+        with xmlrpc.client.ServerProxy("http://localhost:8002/") as proxy_02:
             extra_outcome = proxy_02.balancer(outcome_01_last, outcome_02_last, extra_prime_list)[0] # we don't need the indicator actually - just to check
     
     elif outcome_01_last < outcome_02_last:
         # Call Server01
-        with xmlrpc.client.ServerProxy("http://localhost:8000/") as proxy_01:
+        with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_01:
             extra_outcome = proxy_01.balancer(outcome_01_last, outcome_02_last, extra_prime_list)[0]
 
 
