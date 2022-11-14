@@ -111,12 +111,16 @@ with xmlrpc.client.ServerProxy("http://localhost:8001/") as proxy_02:
 # And vice versa
 
 # when the biggest prime number of SV_01 is smaller than the one of SV_02
-if outcome_01[-1] < outcome_02:
+if outcome_01[-1] < outcome_02[-1]:
 
     # Check is there any prime number in between outcome_01[-1] and outcome_02[-2]
     # Have to make another function.. haha
     # 
+    
     pass
+
+
+
 
 final_outcome = outcome_01 + outcome_02
 

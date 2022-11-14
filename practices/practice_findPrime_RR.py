@@ -88,11 +88,60 @@ def findPrimeUntilDesired_SV_02(num1, num2, prime_list=list()):
 
     return prime_list
 
-print(findPrimeUntilDesired(2, 31))
-print(findPrimeUntilDesired_SV_01(4, 16))
-print(findPrimeUntilDesired_SV_02(4, 15))
+print(findPrimeUntilDesired(5, 21))
+print(findPrimeUntilDesired_SV_01(5, 11))
+print(findPrimeUntilDesired_SV_02(5, 10))
 
 # 2, 3, 5, 7, 11, 13, 17, 19
 
 # 정확히 반으로 안나눠짐..
 # Prime Number를 해당 알고리듬을 사용해여 효과적인 round robin 구현 불가..
+
+# Solution
+
+# The function to find any valid (hidden) prime number b/w outcome_01[-1] and outcome_02[-1]
+def balancer(outcome_01_last, outcome_02_last, extra_prime_list=list()):
+
+    indicator = 0 
+    # 1 : extra_prime_list is the complement for outcome_02
+    # 2 : extra_prime_list is the complement for outcome_01
+
+    if outcome_01_last > outcome_02_last:
+        # try to find the next prime
+        num1 = outcome_02_last + 4 
+        # to inform which condition
+        indicator = 2 # << extra_prime_list is the complement of outcome_02
+
+        while outcome_01_last > num1:
+            if isPrime(num1) and num1 == 2:
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1+1)
+
+            elif isPrime(num1):
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1)
+
+            elif not isPrime(num1):
+                num1 = findNextPrime_RR(num1)
+    elif outcome_01_last < outcome_02_last:
+        # try to find the next prime
+        num1 = outcome_01_last + 4
+        # to inform which condition 
+        indicator = 1 # << extra_prime_list is the complement of outcome_01
+
+        while num1 < outcome_02_last:
+            if isPrime(num1) and num1 == 2:
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1+1)
+
+            elif isPrime(num1):
+                extra_prime_list.append(num1)
+                num1 = findNextPrime_RR(num1)
+
+            elif not isPrime(num1):
+                num1 = findNextPrime_RR(num1)
+
+    return extra_prime_list, indicator
+
+print(f'Hi! : {balancer(41, 71)}')
+
