@@ -1,6 +1,8 @@
 import rpyc
 from rpyc.utils.server import ThreadedServer
 import math
+import numpy as np
+rpyc.core.protocol.DEFAULT_CONFIG['allow_pickle'] = True
 
 @rpyc.service
 class Primer_SV_02(rpyc.Service):
@@ -60,7 +62,7 @@ class Primer_SV_02(rpyc.Service):
             elif not self.isPrime(num1):
                 num1 = self.findNextPrime_RR(num1)
 
-        return self.prime_list
+        return np.array(self.prime_list)
 
     @rpyc.exposed
     def balancer(self, outcome_01_last, outcome_02_last):
@@ -105,11 +107,11 @@ class Primer_SV_02(rpyc.Service):
                 elif not self.isPrime(num1):
                     num1 = self.findNextPrime_RR(num1)
 
-        return self.extra_prime_list, indicator
+        return np.array(self.extra_prime_list)
 
 
 print("Listening on port 8102...")
 
 if __name__ == "__main__":
-    server = ThreadedServer(Primer_SV_02, port = 8102)
+    server = ThreadedServer(Primer_SV_02, port = 8102, protocol_config = rpyc.core.protocol.DEFAULT_CONFIG)
     server.start()

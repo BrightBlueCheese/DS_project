@@ -1,5 +1,5 @@
 import time
-
+import numpy as np
 
 start_time = time.time()
 
@@ -21,3 +21,9 @@ print(list_03)
 print(max(list_01 + list_02))
 
 print(sorted(list_03)[:6])
+
+print(list_01 + list_02)
+
+
+print(np.array(list_01))
+print(max(np.concatenate((list_01, list_02), axis=None)))

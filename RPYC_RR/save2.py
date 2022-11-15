@@ -1,9 +1,13 @@
 import rpyc
 import time
 import math
+import numpy as np
+rpyc.core.protocol.DEFAULT_CONFIG['allow_pickle'] = True
 
-conn_01 = rpyc.connect('localhost', 8101)
-conn_02 = rpyc.connect('localhost', 8102)
+conn_01 = rpyc.connect('localhost', port = 8101, config = rpyc.core.protocol.DEFAULT_CONFIG)
+conn_02 = rpyc.connect('localhost', port = 8102, config = rpyc.core.protocol.DEFAULT_CONFIG)
+
+my_list = []
 
 # prompt the user for the input
 num1: int = int(input('Enter the start number:'))
@@ -45,24 +49,44 @@ num2_SV_01, num2_SV_02 = spliter(num2)
 
 
 outcome_01_raw = rpyc.async_(conn_01.root.findPrimeUntilDesired_SV_01)(num1, num2_SV_01)
-print(f'1 : {time.time() - time_start}')
+print(time.time() - time_start)
 
 
 outcome_02_raw = rpyc.async_(conn_02.root.findPrimeUntilDesired_SV_02)(num1, num2_SV_02)
-print(f'2 : {time.time() - time_start}')
+print(time.time() - time_start)
 
+# print(f'{len(list(outcome_02_raw.value))} {outcome_02_raw.value}')
+# print(f'ping: {time.time() - time_start}')
+# print(f'{len(list(outcome_01_raw.value))} {outcome_01_raw.value}')
+# print(f'ping2: {time.time() - time_start}')
+# # outcome_01_raw.wait()
+print(f'ping3: {time.time() - time_start}')
+# # outcome_02_raw.wait()
+my_list.append(outcome_01_raw.value)
+my_list.append(outcome_02_raw.value)
+print(f'ping3a: {time.time() - time_start}')
+numpi = np.array(outcome_01_raw.value)
+print(f'ping3b: {time.time() - time_start}')
+print(numpi)
+print(f'ping3c: {time.time() - time_start}')
+# print(outcome_01_raw.value + outcome_02_raw.value)
+# print(type(outcome_01_raw.value.list))
+print(f'ping4: {time.time() - time_start}')
 
-# wait until the processes are done
-outcome_01_raw.wait()
-outcome_02_raw.wait()
-print(f'len: {len(list(outcome_02_raw.value))} - {outcome_02_raw.value}')
-print(f'{type(list(outcome_02_raw.value))}')
-print(f'3 : {time.time() - time_start}')
+print(outcome_02_raw.value[-1])
+print(f'ping4a: {time.time() - time_start}')
+# new_type = outcome_02_raw.value + outcome_01_raw.value
+# print(new_type)
+print(f'ping4b: {time.time() - time_start}')
+outcome_02 = np.array(outcome_02_raw.value)
+print(f'ping5: {time.time() - time_start}')
 
-# change the data type as list
-outcome_01 = list(outcome_01_raw.value)
-outcome_02 = list(outcome_02_raw.value)
-print(f'4 : {time.time() - time_start}')
+outcome_01 = np.array(outcome_01_raw.value)
+print(f'ping6: {time.time() - time_start}')
+# print(f'{outcome_02_raw.value}')
+# print(f'{type(list(outcome_02_raw.value))}')
+print(time.time() - time_start)
+print(f'{len(outcome_01)}, {len(outcome_02)}')
 
 # # # # #
 # Challenge : This is not yet completed
@@ -82,31 +106,42 @@ print(f'4 : {time.time() - time_start}')
 
 # Get the last(== biggest) prime number of each list 
 # Then find is there any hidden prime number b/w two lists
-outcome_01_last = outcome_01[-1]
-outcome_02_last = outcome_02[-1]
-print(f'5 : {time.time() - time_start}')
+print(time.time() - time_start)
+
+
+print(type(int(outcome_01_raw.value[-1])))
+
+outcome_01_last = int(outcome_01_raw.value[-1])
+outcome_02_last = int(outcome_02_raw.value[-1])
+print(f'{outcome_01_last} , {outcome_02_last}')
+print(f'{outcome_01[0]} , {outcome_02[0]}')
+extra_outcome = []
+print(time.time() - time_start)
 # if maximum prime number is greater than 2
-if max(outcome_01 + outcome_02) > 2:
-    
+if max(np.concatenate((outcome_01, outcome_02), axis=None)) > 2:
+
     # balancer will returns (extra_prime_list, indicator)
-    # This does not need an Async process
     if outcome_01_last > outcome_02_last:
-        # call SV_02
-        # extra_outcome = list(conn_02.root.balancer(outcome_01_last, outcome_02_last)[0])
+        print(f'A1 {time.time() - time_start}')
         extra_outcome_raw = rpyc.async_(conn_02.root.balancer)(outcome_01_last, outcome_02_last)
-        extra_outcome = list(extra_outcome_raw.value[0])
-    
+        extra_outcome = np.array(extra_outcome_raw.value)
+        # extra_outcome_raw = conn_02.root.balancer(outcome_01_last, outcome_02_last)
+        print(f'A2 {time.time() - time_start}')
+        print(f'extra : {np.array(extra_outcome_raw.value)}')
+        print(f'A3 {time.time() - time_start}')
+        # extra_outcome = extra_outcome_raw.value
+
     elif outcome_01_last < outcome_02_last:
         # call SV_01
         extra_outcome = list(conn_01.root.balancer(outcome_01_last, outcome_02_last)[0])
 
-print(f'5 : {time.time() - time_start}')
 
+print(extra_outcome)
 
-# Put the hidden prime number and take any remnant prime number out
-final_outcome = sorted(outcome_01 + outcome_02 + extra_outcome)[:num2]
-
+final_outcome = sorted(np.concatenate((outcome_01, outcome_02, extra_outcome), axis=None))[:num2]
+print(num2)
+# final_outcome = sorted(np.concatenate((outcome_01, outcome_02), axis=None))[:num2]
 process_time = time.time() - time_start
 print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')
-# print(f'{extra_outcome}')
+print(f'len : {len(final_outcome)}')
 print(f'{process_time : .5f}')
