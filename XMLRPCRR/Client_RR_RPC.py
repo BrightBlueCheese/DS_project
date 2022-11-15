@@ -158,5 +158,10 @@ print(f'{process_time : .5f}')
 #  sigle / RR ratio  = 1 : 1.44
 
 # single : 2 , 400,000 -> 92.03900
-# RR : 2, 30,000 ->  86.97157
-#  sigle / RR ratio  = 1 : 1.44
+# RR : 2, 30,000 ->  203.79857
+#  sigle / RR ratio  = 1 : 2.21
+
+# xmlrpc Asynchronous
+# xmlrpc does not have async
+# Tornado  has
+# https://stackoverflow.com/questions/19280176/make-asynchronous-xmlrpc-client-call-in-tornado

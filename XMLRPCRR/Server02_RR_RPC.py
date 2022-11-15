@@ -38,11 +38,15 @@ def findPrimeUntilDesired_SV_02(num1, num2, prime_list=list()):
     # either 0 or 1 or 2, start from 3
     if num1 == 0 or num1 == 1 or num1 == 2:
         num1 = 3
+
     # when even number, make it odd number
     elif num1 % 2 == 0:
         num1 += 3
+
     else:
         num1 += 2
+
+
     # find NextPrime을 고쳐야 할 듯
     while not num2 == len(prime_list):
 
@@ -61,6 +65,8 @@ def findPrimeUntilDesired_SV_02(num1, num2, prime_list=list()):
 
 # Identical to the one in the Server02 - This system has to find the prime numbers at the server side
 # The function to find any valid (hidden) prime number b/w outcome_01[-1] and outcome_02[-1]
+
+
 def balancer(outcome_01_last, outcome_02_last, extra_prime_list=list()):
 
     indicator = 0 
