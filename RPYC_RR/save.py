@@ -1,22 +1,17 @@
 import rpyc
 import time
 import math
+import numpy as np
+rpyc.core.protocol.DEFAULT_CONFIG['allow_pickle'] = True
 
-conn_01 = rpyc.connect('localhost', 8101)
-conn_02 = rpyc.connect('localhost', 8102)
+conn_01 = rpyc.connect('localhost', port = 8101, config = rpyc.core.protocol.DEFAULT_CONFIG)
+conn_02 = rpyc.connect('localhost', port = 8102, config = rpyc.core.protocol.DEFAULT_CONFIG)
+
+my_list = []
 
 # prompt the user for the input
 num1: int = int(input('Enter the start number:'))
-
-while num1 < 0:
-    print('Negative integer ins not valid. Please try again.')
-    num1: int = int(input('Enter the start number:'))
-
 num2: int = int(input('Enter the amount of prime numbers:'))
-
-while num2 <= 0:
-    print('Please enter a valid number.')
-    num2: int = int(input('Enter the amount of prime numbers:'))
 
 # Start to record time
 time_start = time.time()
@@ -53,27 +48,21 @@ num2_SV_01, num2_SV_02 = spliter(num2)
 # ##################
 
 
-
-outcome_01 = rpyc.async_(conn_01.root.findPrimeUntilDesired_SV_01(num1, num2_SV_01))
-print(time.time() - time_start)
+outcome_01_raw = rpyc.async_(conn_01.root.findPrimeUntilDesired_SV_01)(num1, num2_SV_01)
 
 
-outcome_02 = rpyc.async_(conn_02.root.findPrimeUntilDesired_SV_02(num1, num2_SV_02))
-print(time.time() - time_start)
+outcome_02_raw = rpyc.async_(conn_02.root.findPrimeUntilDesired_SV_02)(num1, num2_SV_02)
 
-# print(f'{outcome_02.value}')
 
-# outcome_01.wait()
-# outcome_02.wait()
-# print(f'{outcome_02.value}')
-# print(f'{type(list(outcome_02.value))}')
-print(time.time() - time_start)
 
-print(f'{outcome_01}')
-print(f'{type(outcome_01)}')
+# Change rpyc into list takes dramatic times
+# So had to convert numpy instead of list
+outcome_02 = np.array(outcome_02_raw.value)
 
-outcome_01_yes = list(outcome_01)
-outcome_02_yes = list(outcome_02)
+
+outcome_01 = np.array(outcome_01_raw.value)
+
+
 # # # # #
 # Challenge : This is not yet completed
 # The code will ruin when num2 becomes large
@@ -92,27 +81,34 @@ outcome_02_yes = list(outcome_02)
 
 # Get the last(== biggest) prime number of each list 
 # Then find is there any hidden prime number b/w two lists
-outcome_01_last = outcome_01_yes[-1]
-outcome_02_last = outcome_02_yes[-1]
+print(time.time() - time_start)
+
+
+print(type(int(outcome_01_raw.value[-1])))
+
+outcome_01_last = int(outcome_01_raw.value[-1])
+outcome_02_last = int(outcome_02_raw.value[-1])
+
+extra_outcome = []
 
 # if maximum prime number is greater than 2
-if max(outcome_01_yes + outcome_02_yes) > 2:
+if max(np.concatenate((outcome_01, outcome_02), axis=None)) > 2:
 
     # balancer will returns (extra_prime_list, indicator)
-    # This one does not need an Async process
     if outcome_01_last > outcome_02_last:
-        # call SV_02
-        extra_outcome = list(conn_02.root.balancer(outcome_01_last, outcome_02_last)[0]) # we don't need the indicator actually - just to check
+        extra_outcome_raw = rpyc.async_(conn_02.root.balancer)(outcome_01_last, outcome_02_last)
+        extra_outcome = np.array(extra_outcome_raw.value)
 
     elif outcome_01_last < outcome_02_last:
         # call SV_01
-        extra_outcome = list(conn_01.root.balancer(outcome_01_last, outcome_02_last)[0])
+        extra_outcome_raw = rpyc.async_(conn_01.root.balancer)(outcome_01_last, outcome_02_last)
+        extra_outcome = np.array(extra_outcome_raw.value)
 
 
+# print(extra_outcome)
 
-# Put the hidden prime number and take any remnant prime number out
-final_outcome = sorted(outcome_01_yes + outcome_02_yes + extra_outcome)[:num2]
-
+final_outcome = sorted(np.concatenate((outcome_01, outcome_02, extra_outcome), axis=None))[:num2]
+# print(num2)
 process_time = time.time() - time_start
 print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')
 print(f'{process_time : .5f}')
