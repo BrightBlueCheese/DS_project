@@ -16,6 +16,7 @@ class Primer_SV_02(rpyc.Service):
         # 1 is not a prime number
         if number == 1:
             return False
+
         else:    
             for i in range(2, int(math.sqrt(number)) + 1):
                     if (number % i) == 0:
@@ -44,7 +45,6 @@ class Primer_SV_02(rpyc.Service):
 
         else:
             num1 += 2
-
 
         # record starting time to calculate the process time
         while not num2 == len(self.prime_list):
