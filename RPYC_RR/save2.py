@@ -49,44 +49,19 @@ num2_SV_01, num2_SV_02 = spliter(num2)
 
 
 outcome_01_raw = rpyc.async_(conn_01.root.findPrimeUntilDesired_SV_01)(num1, num2_SV_01)
-print(time.time() - time_start)
 
 
 outcome_02_raw = rpyc.async_(conn_02.root.findPrimeUntilDesired_SV_02)(num1, num2_SV_02)
-print(time.time() - time_start)
 
-# print(f'{len(list(outcome_02_raw.value))} {outcome_02_raw.value}')
-# print(f'ping: {time.time() - time_start}')
-# print(f'{len(list(outcome_01_raw.value))} {outcome_01_raw.value}')
-# print(f'ping2: {time.time() - time_start}')
-# # outcome_01_raw.wait()
-print(f'ping3: {time.time() - time_start}')
-# # outcome_02_raw.wait()
-my_list.append(outcome_01_raw.value)
-my_list.append(outcome_02_raw.value)
-print(f'ping3a: {time.time() - time_start}')
-numpi = np.array(outcome_01_raw.value)
-print(f'ping3b: {time.time() - time_start}')
-print(numpi)
-print(f'ping3c: {time.time() - time_start}')
-# print(outcome_01_raw.value + outcome_02_raw.value)
-# print(type(outcome_01_raw.value.list))
-print(f'ping4: {time.time() - time_start}')
 
-print(outcome_02_raw.value[-1])
-print(f'ping4a: {time.time() - time_start}')
-# new_type = outcome_02_raw.value + outcome_01_raw.value
-# print(new_type)
-print(f'ping4b: {time.time() - time_start}')
+
+# Change rpyc into list takes dramatic times
+# So had to convert numpy instead of list
 outcome_02 = np.array(outcome_02_raw.value)
-print(f'ping5: {time.time() - time_start}')
+
 
 outcome_01 = np.array(outcome_01_raw.value)
-print(f'ping6: {time.time() - time_start}')
-# print(f'{outcome_02_raw.value}')
-# print(f'{type(list(outcome_02_raw.value))}')
-print(time.time() - time_start)
-print(f'{len(outcome_01)}, {len(outcome_02)}')
+
 
 # # # # #
 # Challenge : This is not yet completed
@@ -113,27 +88,21 @@ print(type(int(outcome_01_raw.value[-1])))
 
 outcome_01_last = int(outcome_01_raw.value[-1])
 outcome_02_last = int(outcome_02_raw.value[-1])
-print(f'{outcome_01_last} , {outcome_02_last}')
-print(f'{outcome_01[0]} , {outcome_02[0]}')
+
 extra_outcome = []
-print(time.time() - time_start)
+
 # if maximum prime number is greater than 2
 if max(np.concatenate((outcome_01, outcome_02), axis=None)) > 2:
 
     # balancer will returns (extra_prime_list, indicator)
     if outcome_01_last > outcome_02_last:
-        print(f'A1 {time.time() - time_start}')
         extra_outcome_raw = rpyc.async_(conn_02.root.balancer)(outcome_01_last, outcome_02_last)
         extra_outcome = np.array(extra_outcome_raw.value)
-        # extra_outcome_raw = conn_02.root.balancer(outcome_01_last, outcome_02_last)
-        print(f'A2 {time.time() - time_start}')
-        print(f'extra : {np.array(extra_outcome_raw.value)}')
-        print(f'A3 {time.time() - time_start}')
-        # extra_outcome = extra_outcome_raw.value
 
     elif outcome_01_last < outcome_02_last:
         # call SV_01
-        extra_outcome = list(conn_01.root.balancer(outcome_01_last, outcome_02_last)[0])
+        extra_outcome_raw = rpyc.async_(conn_01.root.balancer)(outcome_01_last, outcome_02_last)
+        extra_outcome = np.array(extra_outcome_raw.value)
 
 
 print(extra_outcome)
@@ -143,5 +112,4 @@ print(num2)
 # final_outcome = sorted(np.concatenate((outcome_01, outcome_02), axis=None))[:num2]
 process_time = time.time() - time_start
 print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')
-print(f'len : {len(final_outcome)}')
 print(f'{process_time : .5f}')
