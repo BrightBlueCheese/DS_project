@@ -23,10 +23,10 @@ class Primer(rpyc.Service):
 
     @rpyc.exposed
     def findNextPrime(self, number):
-        # # original  :  num1 = 0, num2 = 10000 -> 14.44417s
+        # # original  :  num1 = 0, num2 = 100000 -> 14.44417s
         # self.number += 1;
 
-        # # optimized :  num1 = 0, num2 = 10000 -> 13.82599
+        # # optimized :  num1 = 0, num2 = 100000 -> 13.95051s
         number += 2
 
         while not self.isPrime(number):
