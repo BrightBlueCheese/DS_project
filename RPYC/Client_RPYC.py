@@ -21,3 +21,4 @@ print(f'{process_time : .5f}')
 
 
 
+# 0, 10000 -> 0.36403s

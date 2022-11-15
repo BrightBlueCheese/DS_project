@@ -1,3 +1,9 @@
+# Title : Server_RPYC_1b1.py
+# Author : Youngmin Lee
+# Date : Nov 14 2022
+# Description : A Server that keeps receiving single positive ineger from a Client and sending back to the Client
+# if the integer is a prime number. The Client and the Server interact for each integer
+
 import rpyc
 from rpyc.utils.server import ThreadedServer
 import math
@@ -34,32 +40,6 @@ class Primer(rpyc.Service):
             number += 2
 
         return number;
-
-    @rpyc.exposed
-    def findPrimeUntilDesired(self, num1, num2):
-
-        if num1 == 0 or num1 == 1:
-            num1 = 2
-
-        # when even number except 2, make it odd number
-        elif num1 != 2 and num1 % 2 == 0:
-            num1 += 1
-
-        # record starting time to calculate the process time
-        while not num2 == len(self.prime_list):
-
-            if self.isPrime(num1) and num1 == 2:
-                self.prime_list.append(num1)
-                num1 = self.findNextPrime(num1-1)
-
-            elif self.isPrime(num1):
-                self.prime_list.append(num1)
-                num1 = self.findNextPrime(num1)
-
-            elif not self.isPrime(num1):
-                num1 = self.findNextPrime(num1)
-
-        return self.prime_list
 
 
 print("Listening on port 8103...")
