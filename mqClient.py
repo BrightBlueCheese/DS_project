@@ -4,6 +4,7 @@
 # Creation date: 09/15/2022
 
 import pika
+import time
 
 # declare variables
 reconnect_on_failure = True
@@ -17,25 +18,36 @@ def consumer(connection, channel):
     # channel.queue_bind(exchange='findPrimeIn', queue='fPrimeIn')
     print('[*] Waiting for prime numbers from the server To exit press CTRL+C\n')
 
+    global start_time
+    start_time = time.time()
+
     def callback(ch, method, properties, body):
+        
         global i
         primenum = int(body)
         print('{},'.format(primenum), end=' ')
         # create a nice looking output so carriage return every 20 numbers
         if i % 20 ==0:
             print()
+            # print('case1')
         primenum += 1
         primestr:str = str(primenum)
         # we only want the client to ask for the given amount of numbers after that we want the client to stop execution
         if i <= num2:
             ch.basic_publish(exchange='findPrimeIn', routing_key='primeIn', body=primestr)
+            # print('case2')
         else:
             print()
+            print(f'process time : {time.time()-start_time: 0.8f}')
             quit()
+        
         i += 1
+        
     # the client waits and listens for the server putting something on the out queue
+    
     channel.basic_consume(queue='fPrimeOut', on_message_callback=callback, auto_ack=True)
     channel.start_consuming()
+    
 
 # establish the connection to the RabbitMQ
 def getConnectionAndChannel():
@@ -44,8 +56,9 @@ def getConnectionAndChannel():
     ch = connection.channel()
     return connection, ch
 
-# start the client and reestablish the connection if getting lost
-def startClient(reconnect_on_failure):
+    # MOM - RabbitMQ
+# start the client (server) and reestablish the connection if getting lost
+def startClient(reconnect_on_failure): # or startServer
     connection, channel = getConnectionAndChannel()
     # start the client consumer
     consumer(connection, channel)
@@ -62,6 +75,7 @@ def startClient(reconnect_on_failure):
 # prompt the user for the input
 num1: int = int(input('Enter the start number:'))
 num2: int = int(input('Enter the amount of prime numbers:'))
+
 # the following line wouldn't be needed if the input was changed!
 numberStr:str = str(num1)
 
@@ -73,4 +87,6 @@ channel.basic_publish(exchange='findPrimeIn', routing_key='primeIn', body=number
 print('First message, {}, successfully put into fPrimeIn-queue ... \n'.format(numberStr))
 connection.close()
 print('Client starts ... \n')
+
+print('case1')
 startClient(reconnect_on_failure)

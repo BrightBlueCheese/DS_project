@@ -1,6 +1,8 @@
 import rpyc
 import time
 import math
+import numpy as np
+rpyc.core.protocol.DEFAULT_CONFIG['allow_pickle'] = True
 
 conn_01 = rpyc.connect('localhost', 8104)
 conn_02 = rpyc.connect('localhost', 8105)
@@ -66,11 +68,14 @@ async_02_findNextPrime_RR = rpyc.async_(conn_02.root.findNextPrime_RR)
 # when 0 or 1, start from 2
 
 def findPrimeUntilDesired_RR_1b1(num1, num2):
-    prime_list_01 = []
-    prime_list_02 = []
+    prime_list_01 = np.array([])
+    prime_list_02 = np.array([])
 
     if num1 == 0 or num1 == 1:
         num1 = 2
+        num1_02 = num1 + 1
+
+    elif num1 == 2:
         num1_02 = num1 + 1
 
     # when even number except 2, make it odd number
@@ -86,97 +91,70 @@ def findPrimeUntilDesired_RR_1b1(num1, num2):
     while (((num2/2) >= (len(prime_list_01))) and ((num2/2) >= (len(prime_list_02)))):
 
         if async_02_isPrime(num1).value and num1 == 2:
-            prime_list_01.append(num1)
-            prime_list_02.append(num1_02)
+            prime_list_01 = np.append(prime_list_01, num1)
+            prime_list_02 = np.append(prime_list_02, num1_02)
             num1_raw = async_01_findNextPrime_RR(num1-1)
             num1_02_raw = async_02_findNextPrime_RR(num1_02)
-            num1_raw.wait()
-            num1_02_raw.wait()
+            # num1_raw.wait()
+            # num1_02_raw.wait()
             num1 = num1_raw.value
             num1_02 = num1_02_raw.value
-            # num1 = async_01_findNextPrime_RR(num1-1).value
-            # num1_02 = async_02_findNextPrime_RR(num1_02).value
-            prime_list_01.append(num1)
-            prime_list_02.append(num1_02)
+            prime_list_01 = np.append(prime_list_01, num1)
+            prime_list_02 = np.append(prime_list_02, num1_02)
 
         else:
             num1_raw = async_01_findNextPrime_RR(num1)
             num1_02_raw = async_02_findNextPrime_RR(num1_02)
-            num1_raw.wait()
-            num1_02_raw.wait()
+            # num1_raw.wait()
+            # num1_02_raw.wait()
             num1 = num1_raw.value
             num1_02 = num1_02_raw.value
-            # num1 = async_01_findNextPrime_RR(num1).value
-            # num1_02 = async_02_findNextPrime_RR(num1_02).value
-            prime_list_01.append(num1)
-            prime_list_02.append(num1_02)
+            prime_list_01 = np.append(prime_list_01, num1)
+            prime_list_02 = np.append(prime_list_02, num1_02)
 
     return prime_list_01, prime_list_02
 
 
 
 
-# # outcome_01 = rpyc.async_(conn_01.root.findPrimeUntilDesired_SV_01)(num1, num2_SV_01)
-# outcome_01 = rpyc.async_(findPrimeUntilDesired_SV_01_1b1)(num1, num2_SV_01)
-# print(time.time() - time_start)
 
-
-# # outcome_02 = rpyc.async_(conn_02.root.findPrimeUntilDesired_SV_02)(num1, num2_SV_01)
-# outcome_02 = rpyc.async_(findPrimeUntilDesired_SV_02_1b1)(num1, num2_SV_01)
-# print(time.time() - time_start)
-
-# # print(f'{outcome_02.value}')
-
-# outcome_01.wait()
-# outcome_02.wait()
-# print(f'{outcome_02.value}')
-# print(f'{type(list(outcome_02.value))}')
-# print(time.time() - time_start)
-
-
-# # # # #
-# Challenge : This is not yet completed
-# The code will ruin when num2 becomes large
-# Ex
-# prime numbers when num1 = 2, num2 =32 -> 
-# [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127]
-# However, 
-# SV_01 -> [5, 13, 17, 29, 37, 41, 53, 61, 73, 89, 97, 101, 109, 113, 137, 149]
-# SV_02 -> [7, 11, 19, 23, 31, 43, 47, 59, 67, 71, 79, 83, 103, 107, 127]
-# Since we don't know the distribution of prime number with
-# Z_01 that 1 + 4x where x are positive Z
-# Z_02 that 3 + 4x where x are positive Z
-# Thus, somehow, we have to do some engineering
-# To check whether the SV_02 has any additional prime number which are smaller than the biggest number of SV_01
-# And vice versa
-
-
+###
+# This part Actually does not need for RPYC_RR_1b1
+# But I left it for the fault tolerance for JUST IN CASE
+###
 outcome_01, outcome_02 = findPrimeUntilDesired_RR_1b1(num1, num2)
 
 # Get the last(== biggest) prime number of each list 
 # Then find is there any hidden prime number b/w two lists
-outcome_01_last = outcome_01[-1]
-outcome_02_last = outcome_02[-1]
+outcome_01_last = int(outcome_01[-1])
+outcome_02_last = int(outcome_02[-1])
 
 # if maximum prime number is greater than 2
-if max(outcome_01 + outcome_02) > 2:
-    extra_outcome = []
+if max(np.concatenate((outcome_01, outcome_02), axis=None)) > 2:
+
     # balancer will returns (extra_prime_list, indicator)
     # This one does not need an Async process
     if outcome_01_last > outcome_02_last:
         # call SV_02
-        extra_outcome = list(conn_02.root.balancer(outcome_01_last, outcome_02_last)[0]) # we don't need the indicator actually - just to check
+        extra_outcome = np.array(conn_02.root.balancer(outcome_01_last, outcome_02_last)) # we don't need the indicator actually - just to check
     
     elif outcome_01_last < outcome_02_last:
         # call SV_01
-        extra_outcome = list(conn_01.root.balancer(outcome_01_last, outcome_02_last)[0])
+        # extra_outcome = list(conn_01.root.balancer(outcome_01_last, outcome_02_last)[0])
+        extra_outcome = np.array(conn_01.root.balancer(outcome_01_last, outcome_02_last))
 
 
-print(f'{outcome_01} , {outcome_02}')
-print(f'extra : {extra_outcome}')
+# print(f'{outcome_01_last} , {outcome_02_last}')
+# print(f'extra : {extra_outcome}')
+# print(time.time() - time_start)
 
 # Put the hidden prime number and take any remnant prime number out
-final_outcome = sorted(outcome_01 + outcome_02 + extra_outcome)[:num2]
+# final_outcome = sorted(outcome_01 + outcome_02 + extra_outcome)[:num2]
+final_outcome = sorted(np.concatenate((outcome_01, outcome_02, extra_outcome), axis=None))[:num2]
 process_time = time.time() - time_start
+
+# change data type to int
+# final_outcome = final_outcome.astype('int')
+
 print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')
 print(f'{process_time : .5f}')

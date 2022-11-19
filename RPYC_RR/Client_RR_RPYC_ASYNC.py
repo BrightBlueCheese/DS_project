@@ -85,6 +85,7 @@ outcome_02_last = int(outcome_02_raw.value[-1])
 
 # extra_outcome = []
 
+# To find the hidden prime numbers in between outcome_01_last and outcome_02_last
 # if maximum prime number is greater than 2
 if max(np.concatenate((outcome_01, outcome_02), axis=None)) > 2:
 
@@ -101,7 +102,9 @@ if max(np.concatenate((outcome_01, outcome_02), axis=None)) > 2:
 
 # print(extra_outcome)
 
+# Correct the prime number list
 final_outcome = sorted(np.concatenate((outcome_01, outcome_02, extra_outcome), axis=None))[:num2]
+
 # print(num2)
 process_time = time.time() - time_start
 print(f'len : {len(final_outcome)} , outcomes : {final_outcome}')

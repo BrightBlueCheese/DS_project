@@ -41,6 +41,7 @@ def consumer(connection, channel):
         print('Server puts {} into the fPrimeOut queue ...'.format(primenum))
         # return the found prime number by putting it into the out-queue
         ch.basic_publish(exchange='findPrimeOut', routing_key='primeOut', body=primenum)
+        # print('yes')
 
     channel.basic_consume(queue='fPrimeIn', on_message_callback=callback, auto_ack=True)
     channel.start_consuming()

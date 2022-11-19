@@ -27,3 +27,10 @@ print(list_01 + list_02)
 
 print(np.array(list_01))
 print(max(np.concatenate((list_01, list_02), axis=None)))
+
+
+np_01 = np.array(list_01)
+np_01 = np.append(np_01, 1)
+print(np_01)
+
+print(np.array([]))

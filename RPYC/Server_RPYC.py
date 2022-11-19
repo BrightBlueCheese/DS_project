@@ -54,7 +54,8 @@ class Primer(rpyc.Service):
             elif self.isPrime(num1):
                 self.prime_list.append(num1)
                 num1 = self.findNextPrime(num1)
-
+                
+            # Just in case for fault tolerance
             elif not self.isPrime(num1):
                 num1 = self.findNextPrime(num1)
 
