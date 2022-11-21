@@ -43,14 +43,15 @@ print(time.time() - time_start)
 # Challenge : This is not yet completed
 # The code will ruin when num2 becomes large
 # Ex
-# prime numbers when num1 = 2, num2 =32 -> 
-# [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127]
+# prime numbers when num1 = 5, num2 =32 -> 
+# [5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97, 101, 103, 107, 109, 113, 127]
 # However, 
 # SV_01 -> [5, 13, 17, 29, 37, 41, 53, 61, 73, 89, 97, 101, 109, 113, 137, 149]
 # SV_02 -> [7, 11, 19, 23, 31, 43, 47, 59, 67, 71, 79, 83, 103, 107, 127]
 # Since we don't know the distribution of prime number with
-# Z_01 that 1 + 4x where x are positive Z
-# Z_02 that 3 + 4x where x are positive Z
+# Z_01 that 3 + 4x where x are positive Z
+# Z_02 that 5 + 4x where x are positive Z
+# Should be able to deal with the case of num1 = 0, 1, 2
 # Thus, somehow, we have to do some engineering
 # To check whether the SV_02 has any additional prime number which are smaller than the biggest number of SV_01
 # And vice versa

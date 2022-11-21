@@ -73,8 +73,9 @@ outcome_01 = np.array(outcome_01_raw.value)
 # SV_01 -> [5, 13, 17, 29, 37, 41, 53, 61, 73, 89, 97, 101, 109, 113, 137, 149]
 # SV_02 -> [7, 11, 19, 23, 31, 43, 47, 59, 67, 71, 79, 83, 103, 107, 127]
 # Since we don't know the distribution of prime number with
-# Z_01 that 1 + 4x where x are positive Z
-# Z_02 that 3 + 4x where x are positive Z
+# Z_01 that 3 + 4x where x are positive Z
+# Z_02 that 5 + 4x where x are positive Z
+# Should be able to deal with the case of num1 = 0, 1, 2
 # Thus, somehow, we have to do some engineering
 # To check whether the SV_02 has any additional prime number which are smaller than the biggest number of SV_01
 # And vice versa
